@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
+use App\Http\Controllers\Backend\CategoryController;
 
 
 //Backend routes
@@ -15,13 +16,18 @@ Route::post('/update-password', [LoginController::class, 'updatePassword'])->nam
 
 Route::get('/register', [LoginController::class, 'register'])->name('admin.register');
 Route::post('/register', [LoginController::class, 'authenticate_register'])->name('admin.register.authenticate');
-    
-// // Admin Routes with Middleware
-Route::group(['middleware' => ['auth:web', PreventBackHistoryMiddleware::class]], function () {
-        Route::get('/dashboard', function () {
-            return view('backend.dashboard'); 
-        })->name('admin.dashboard');
-});
+ 
+Route::prefix('admin')->name('admin.')
+        ->middleware(['auth:web', PreventBackHistoryMiddleware::class])
+        ->group(function () {
+            
+            Route::get('/dashboard', function () {
+                return view('backend.dashboard');
+            })->name('dashboard');
+
+            Route::resource('category', CategoryController::class);
+            
+        });
 
 //frontend routes
 Route::get('/', function () {

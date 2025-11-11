@@ -4,7 +4,7 @@
         <div class="sidebar-wrapper" data-layout="stroke-svg">
           <div class="logo-wrapper"><a href="{{ route('admin.dashboard') }}"><img class="img-fluid" src="{{ asset('') }}" alt="" style="max-width: 20% !important;"></a>
 		  	<a href="{{ route('admin.dashboard') }}">
-				<img class="img-fluid" src="{{ asset('admin/assets/images/logo/Bhojwani-Logo.webp') }}" alt="" style="max-width: 65% !important;">
+				<img class="img-fluid" src="{{ asset('admin/assets/images/logo/somaiya-ayurvihar-logo.png') }}" alt="" style="max-width: 85% !important;">
 			</a>  
 		  <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
             <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
@@ -30,12 +30,21 @@
                     <span class="lan-3">Dashboard</span>
                   </a>
                 </li>
-
-                
-
-               
-
-               
+                <li class="sidebar-list">
+                  <i class="fa fa-thumb-tack"> </i>
+                  <a class="sidebar-link sidebar-title" href="#">
+                    <svg class="stroke-icon"> 
+                      <use href="{{ asset('admin/assets/svg/icon-sprite.svg#stroke-icons') }}"></use>
+                    </svg>
+                    <svg class="fill-icon">
+                      <use href="{{ asset('admin/assets/svg/icon-sprite.svg#stroke-icons') }}"></use>
+                    </svg>
+                    <span>Menu</span>
+                  </a>
+                  <ul class="sidebar-submenu">
+                   <li><a href="{{ route('admin.category.index') }}">Category</a></li>
+                  </ul>
+                </li>
               </ul>
               <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
             </div>

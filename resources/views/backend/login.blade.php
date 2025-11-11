@@ -12,7 +12,12 @@
                 <div class="col-12 p-0">    
                 <div class="login-card login-dark">
                     <div>
-                    <div><a class="logo" href="#"><img class="img-fluid for-dark" src="{{ asset('admin/assets/images/logo/Bhojwani-Logo.webp') }}" alt="looginpage" style="max-width: 17% !important;"><img class="img-fluid for-light" src="{{ asset('admin/assets/images/logo/Bhojwani-Logo.webp') }}" alt="looginpage" style="max-width: 17% !important;"></a></div>
+                    <div>
+                        <a class="logo" href="#">
+                            <!-- <img class="img-fluid for-dark" src="{{ asset('admin/assets/images/logo/somaiya-ayurvihar-logo.png') }}" alt="looginpage" style="max-width: 17% !important;"> -->
+                            <img class="img-fluid for-light" src="{{ asset('admin/assets/images/logo/somaiya-ayurvihar-logo.png') }}" alt="looginpage" style="max-width: 30% !important;">
+                        </a>
+                    </div>
 
                     <div class="login-main"> 
                     <form class="theme-form" action="{{ route('admin.authenticate') }}" method="POST">
