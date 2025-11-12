@@ -44,6 +44,8 @@
                   <ul class="sidebar-submenu">
                    <li><a href="{{ route('admin.category.index') }}">Discover KJSH</a></li>
                    <li><a href="{{ route('admin.kjshsubcategory.index') }}">KJSH Sub Category</a></li>
+                   <li><a href="{{ route('admin.medicalservicecategory.index') }}">Medical Services</a></li>
+                   <li><a href="{{ route('admin.medicalservicesubcategory.index') }}">Medical Services Sub Category</a></li>
                   </ul>
                 </li>
               </ul>
