@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\KjshSubCategoryController;
 
 
 //Backend routes
@@ -26,10 +27,10 @@ Route::prefix('admin')->name('admin.')
             })->name('dashboard');
 
             Route::resource('category', CategoryController::class);
-            
+            Route::resource('kjshsubcategory', KjshSubCategoryController::class);
         });
 
-//frontend routes
-Route::get('/', function () {
-    return view('welcome');
+    //frontend routes
+    Route::get('/', function () {
+        return view('welcome');
 });
