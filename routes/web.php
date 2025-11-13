@@ -7,6 +7,8 @@ use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\KjshSubCategoryController;
 use App\Http\Controllers\Backend\MedicalServiceCategoryController;
 use App\Http\Controllers\Backend\MedicalServiceSubCategoryController;
+use App\Http\Controllers\Backend\DoctorController;
+
 
 
 // ----------------------
@@ -42,6 +44,11 @@ Route::prefix('admin')
         // Medical Services Menus
         Route::resource('medicalservicecategory', MedicalServiceCategoryController::class);
         Route::resource('medicalservicesubcategory', MedicalServiceSubCategoryController::class);
+
+        // Doctors 
+        Route::resource('doctors', DoctorController::class);
+        Route::post('doctors/{doctor}/toggle-featured', [DoctorController::class, 'toggleFeatured'])->name('doctors.toggleFeatured');
+        Route::post('doctors/{doctor}/toggle-active', [DoctorController::class, 'toggleActive'])->name('doctors.toggleActive');
     });
 
 // ----------------------
