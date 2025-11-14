@@ -55,13 +55,14 @@ class DoctorController extends Controller
     public function edit(Doctor $doctor)
     {
         $subcategories = MedicalServiceSubCategory::pluck('subcategory_name', 'id');
-        return view('backend.doctors.edit', compact('doctor', 'subcategories'));
+        $degrees = DB::table('degrees')->get();
+        return view('backend.doctors.edit', compact('doctor', 'subcategories','degrees'));
     }
 
     public function update(DoctorFormRequest $request, Doctor $doctor)
     {
         $validated = $request->validated();
-
+        dd($request->all());
         if ($request->hasFile('profile_image')) {
             Storage::disk('public')->delete($doctor->profile_image);
             $validated['profile_image'] = $request->file('profile_image')->store('doctors/profile', 'public');

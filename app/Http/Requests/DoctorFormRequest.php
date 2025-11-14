@@ -43,8 +43,20 @@ class DoctorFormRequest extends FormRequest
             'consultation_fee' => 'required|numeric|min:0|max:50000',
             'available_days' => 'required|array|min:1',
             'available_days.*' => 'in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-            'morning_time' => 'nullable|required_with:available_days|regex:/^\d{2}:\d{2}-\d{2}:\d{2}$/',
-            'evening_time' => 'nullable|regex:/^\d{2}:\d{2}-\d{2}:\d{2}$/',
+            // 'morning_time' => 'nullable|required_with:available_days|regex:/^\d{2}:\d{2}-\d{2}:\d{2}$/',
+            // 'evening_time' => 'nullable|regex:/^\d{2}:\d{2}-\d{2}:\d{2}$/',
+
+            'consultation_type' => 'required|in:split,full',
+
+            // Split timings
+            'morning_start' => 'nullable|required_if:consultation_type,split|date_format:H:i',
+            'morning_end'   => 'nullable|required_if:consultation_type,split|date_format:H:i',
+            'evening_start' => 'nullable|required_if:consultation_type,split|date_format:H:i',
+            'evening_end'   => 'nullable|required_if:consultation_type,split|date_format:H:i',
+
+            // Full-day timings
+            'full_start' => 'nullable|required_if:consultation_type,full|date_format:H:i',
+            'full_end'   => 'nullable|required_if:consultation_type,full|date_format:H:i',
 
             // Contact
             'phone' => [
@@ -91,7 +103,7 @@ class DoctorFormRequest extends FormRequest
             'phone.regex' => 'Phone must be a valid 10-digit Indian number.',
             'email.unique' => 'This email is already registered.',
             'available_days.required' => 'Select at least one available day.',
-            'morning_time.regex' => 'Morning time format: 09:00-13:00',
+            // 'morning_time.regex' => 'Morning time format: 09:00-13:00',
             'profile_image.required' => 'Profile photo is mandatory.',
             'profile_image.max' => 'Image must be less than 2MB.',
             'short_video.max' => 'Video must be less than 30MB.',
@@ -109,9 +121,37 @@ class DoctorFormRequest extends FormRequest
 
     protected function prepareForValidation()
     {
+        $timings = null;
+
+        if ($this->consultation_type === 'split') {
+            $timings = [
+                'type' => 'split',
+                'morning' => [
+                    'start' => $this->morning_start,
+                    'end'   => $this->morning_end,
+                ],
+                'evening' => [
+                    'start' => $this->evening_start,
+                    'end'   => $this->evening_end,
+                ],
+            ];
+        }
+
+        if ($this->consultation_type === 'full') {
+            $timings = [
+                'type' => 'full',
+                'full_day' => [
+                    'start' => $this->full_start,
+                    'end'   => $this->full_end,
+                ],
+            ];
+        }
+
         $this->merge([
+            'consultation_timings' => $timings,
             'is_featured' => $this->has('is_featured') ? 1 : 0,
             'is_active' => $this->has('is_active') ? 1 : 1,
         ]);
     }
+
 }
