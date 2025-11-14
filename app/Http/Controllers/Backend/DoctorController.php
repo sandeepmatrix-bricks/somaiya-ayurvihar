@@ -62,7 +62,6 @@ class DoctorController extends Controller
     public function update(DoctorFormRequest $request, Doctor $doctor)
     {
         $validated = $request->validated();
-        dd($request->all());
         if ($request->hasFile('profile_image')) {
             Storage::disk('public')->delete($doctor->profile_image);
             $validated['profile_image'] = $request->file('profile_image')->store('doctors/profile', 'public');

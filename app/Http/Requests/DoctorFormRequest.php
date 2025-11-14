@@ -9,7 +9,7 @@ class DoctorFormRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // Allow all authenticated admins
+        return true;
     }
 
     public function rules(): array
@@ -17,7 +17,7 @@ class DoctorFormRequest extends FormRequest
         $doctorId = $this->route('doctor')?->id;
 
         return [
-            // Personal Info
+            /* -------------------- PERSONAL INFO -------------------- */
             'salutation' => 'required|in:Dr.,Mr.,Mrs.,Ms.,Prof.',
             'first_name' => 'required|string|max:100',
             'middle_name' => 'nullable|string|max:100',
@@ -25,7 +25,7 @@ class DoctorFormRequest extends FormRequest
             'gender' => 'required|in:Male,Female,Other',
             'date_of_birth' => 'nullable|date|before:today',
 
-            // Professional
+            /* -------------------- PROFESSIONAL -------------------- */
             'medical_service_sub_category_id' => 'required|exists:medical_service_sub_categories,id',
             'registration_number' => [
                 'required',
@@ -39,32 +39,33 @@ class DoctorFormRequest extends FormRequest
             'degrees' => 'required|string|max:255',
             'languages' => 'required|string|max:255',
 
-            // Consultation
+            /* -------------------- CONSULTATION -------------------- */
             'consultation_fee' => 'required|numeric|min:0|max:50000',
+
             'available_days' => 'required|array|min:1',
             'available_days.*' => 'in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-            // 'morning_time' => 'nullable|required_with:available_days|regex:/^\d{2}:\d{2}-\d{2}:\d{2}$/',
-            // 'evening_time' => 'nullable|regex:/^\d{2}:\d{2}-\d{2}:\d{2}$/',
 
             'consultation_type' => 'required|in:split,full',
 
-            // Split timings
+            /* Split Timings */
             'morning_start' => 'nullable|required_if:consultation_type,split|date_format:H:i',
-            'morning_end'   => 'nullable|required_if:consultation_type,split|date_format:H:i',
+            'morning_end'   => 'nullable|required_if:consultation_type,split|date_format:H:i|after:morning_start',
+
             'evening_start' => 'nullable|required_if:consultation_type,split|date_format:H:i',
-            'evening_end'   => 'nullable|required_if:consultation_type,split|date_format:H:i',
+            'evening_end'   => 'nullable|required_if:consultation_type,split|date_format:H:i|after:evening_start',
 
-            // Full-day timings
+            /* Full-Day Timing */
             'full_start' => 'nullable|required_if:consultation_type,full|date_format:H:i',
-            'full_end'   => 'nullable|required_if:consultation_type,full|date_format:H:i',
+            'full_end'   => 'nullable|required_if:consultation_type,full|date_format:H:i|after:full_start',
 
-            // Contact
+            /* -------------------- CONTACT -------------------- */
             'phone' => [
                 'required',
                 'regex:/^[6-9]\d{9}$/',
                 Rule::unique('doctors', 'phone')->ignore($doctorId),
             ],
             'whatsapp' => 'nullable|regex:/^[6-9]\d{9}$/',
+
             'email' => [
                 'required',
                 'email',
@@ -72,23 +73,24 @@ class DoctorFormRequest extends FormRequest
                 Rule::unique('doctors', 'email')->ignore($doctorId),
             ],
 
-            // Address
+            /* -------------------- ADDRESS -------------------- */
             'address_line_1' => 'required|string|max:255',
             'address_line_2' => 'nullable|string|max:255',
             'city' => 'required|string|max:100',
             'state' => 'nullable|string|max:100',
             'pincode' => 'required|digits:6',
 
-            // Files
+            /* -------------------- FILES -------------------- */
             'profile_image' => [
                 $this->isMethod('POST') ? 'required' : 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png',
                 'max:2048',
             ],
-            'short_video' => 'nullable|mimes:mp4,mov,avi|max:30720', // 30MB
 
-            // Status
+            'short_video' => 'nullable|mimes:mp4,mov,avi|max:30720',
+
+            /* -------------------- STATUS -------------------- */
             'is_featured' => 'sometimes|boolean',
             'is_active' => 'sometimes|boolean',
         ];
@@ -97,16 +99,10 @@ class DoctorFormRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'salutation.required' => 'Please select a salutation.',
-            'first_name.required' => 'First name is required.',
-            'registration_number.unique' => 'This registration number is already taken.',
-            'phone.regex' => 'Phone must be a valid 10-digit Indian number.',
-            'email.unique' => 'This email is already registered.',
-            'available_days.required' => 'Select at least one available day.',
-            // 'morning_time.regex' => 'Morning time format: 09:00-13:00',
-            'profile_image.required' => 'Profile photo is mandatory.',
-            'profile_image.max' => 'Image must be less than 2MB.',
-            'short_video.max' => 'Video must be less than 30MB.',
+            'morning_end.after' => 'Morning end time must be after morning start.',
+            'evening_end.after' => 'Evening end time must be after evening start.',
+            'full_end.after'    => 'Full day end time must be after start time.',
+            'profile_image.required' => 'Profile photo is mandatory for new doctor.',
         ];
     }
 
@@ -123,6 +119,7 @@ class DoctorFormRequest extends FormRequest
     {
         $timings = null;
 
+        /* -------------------- SPLIT TYPE -------------------- */
         if ($this->consultation_type === 'split') {
             $timings = [
                 'type' => 'split',
@@ -137,6 +134,7 @@ class DoctorFormRequest extends FormRequest
             ];
         }
 
+        /* -------------------- FULL DAY TYPE -------------------- */
         if ($this->consultation_type === 'full') {
             $timings = [
                 'type' => 'full',
@@ -150,8 +148,7 @@ class DoctorFormRequest extends FormRequest
         $this->merge([
             'consultation_timings' => $timings,
             'is_featured' => $this->has('is_featured') ? 1 : 0,
-            'is_active' => $this->has('is_active') ? 1 : 1,
+            'is_active'   => $this->has('is_active') ? 1 : 1,
         ]);
     }
-
 }
